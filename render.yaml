@@ -1,0 +1,36 @@
+# Render Blueprint — backend API (monorepo: set rootDir to backend)
+# Dashboard: New → Blueprint → connect GitHub repo, or New Web Service manually with same settings.
+services:
+  - type: web
+    name: lawyerskonnect-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /public/stats
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: AI_LEGAL_PROVIDER
+        value: openai
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: PAYMENT_PROVIDER
+        value: manual
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: AUTH_LOGIN_OTP_ENABLED
+        value: false
