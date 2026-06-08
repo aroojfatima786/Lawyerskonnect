@@ -2,9 +2,6 @@
 # law download/          — source PDFs for npm run setup:legal-rag
 # backend/data/rag/      — chunks_meta.json, embeddings, faiss (runtime chatbot)
 
-# Old standalone Python chatbot (not used by LawyersKonnect app — huge venv)
-legal-chatbot send/
-
 # Dependencies & build output
 **/node_modules/
 **/dist/
