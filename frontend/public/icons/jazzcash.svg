@@ -1,0 +1,5 @@
+<svg width="96" height="96" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="JazzCash icon">
+  <rect x="1" y="1" width="94" height="94" rx="18" fill="#ffffff" stroke="#e5e7eb"/>
+  <path d="M38 20c-11 0-20 9-20 20s9 20 20 20c6 0 11-2 15-6-6-1-11-6-11-14s5-13 11-14c-4-4-9-6-15-6z" fill="#FFD200"/>
+  <path d="M50 20c-6 1-11 6-11 14s5 13 11 14c4 4 9 6 15 6 11 0 20-9 20-20s-9-20-20-20c-6 0-11 2-15 6z" fill="#E21C3D"/>
+</svg>

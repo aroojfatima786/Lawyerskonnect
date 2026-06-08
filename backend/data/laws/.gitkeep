@@ -1,0 +1,2 @@
+# Place Pakistan legal PDFs here (e.g. Constitution, PPC acts).
+# Run: pip install -r scripts/requirements-legal-rag.txt && python scripts/legal_rag.py index

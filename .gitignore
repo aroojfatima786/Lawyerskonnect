@@ -1,0 +1,43 @@
+# === DO NOT ignore (chatbot legal PDFs + RAG index) ===
+# law download/          — source PDFs for npm run setup:legal-rag
+# backend/data/rag/      — chunks_meta.json, embeddings, faiss (runtime chatbot)
+
+# Old standalone Python chatbot (not used by LawyersKonnect app — huge venv)
+legal-chatbot send/
+
+# Dependencies & build output
+**/node_modules/
+**/dist/
+**/dist-ssr/
+**/.temp/
+**/.tmp/
+
+# Environment secrets (use .env.example on server)
+**/.env
+**/.env.local
+**/.env.*.local
+!**/.env.example
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# Backend runtime / dev uploads
+backend/uploads/
+backend/models/face/*.onnx
+backend/coverage/
+
+# IDE
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Python caches (scripts only)
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/venv/
+**/venv_clean/

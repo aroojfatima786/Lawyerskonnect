@@ -1,0 +1,2 @@
+# Law files live at project root: ../law download/
+# Run from backend: npm run setup:legal-rag

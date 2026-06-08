@@ -1,0 +1,346 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  body {
+    @apply bg-slate-50 text-slate-800 text-base leading-relaxed;
+  }
+}
+
+@layer components {
+  /* Page shell: consistent horizontal padding + max width */
+  .lk-page {
+    @apply mx-auto w-full max-w-content px-4 sm:px-5 lg:px-6;
+  }
+  .lk-page-wide {
+    @apply mx-auto w-full max-w-wide px-4 sm:px-5 lg:px-6;
+  }
+  .lk-section-title {
+    @apply text-lg font-semibold sm:text-xl;
+    color: #0f172a;
+  }
+  .lk-page-title {
+    @apply text-2xl font-bold tracking-tight sm:text-3xl;
+    color: #0f172a;
+  }
+
+  /* Public marketing surfaces — safe Tailwind @apply only */
+  .public-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-blue-600;
+  }
+  .public-kicker-muted {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-slate-500;
+  }
+  .public-card {
+    @apply rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/40 shadow-lg shadow-slate-200/40 ring-1 ring-slate-100/80 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-300/30;
+  }
+  .public-hero-dark {
+    @apply relative overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white;
+  }
+  .public-section-soft {
+    @apply relative overflow-hidden bg-gradient-to-br from-blue-50 via-slate-50 to-white;
+  }
+  .public-section-dark {
+    @apply relative overflow-hidden bg-gradient-to-br from-blue-950 to-slate-950 text-white;
+  }
+  .public-gradient-card {
+    @apply rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/40 shadow-lg shadow-slate-200/35 ring-1 ring-slate-100/90;
+  }
+
+  /* Authenticated citizen portal cards — subtle lift (respects motion preferences via Tailwind motion-safe) */
+  .lk-portal-card {
+    @apply motion-safe:transition-shadow motion-safe:duration-200 motion-safe:hover:shadow-lk-card-md;
+  }
+
+  /* Citizen portal — page intro strip (title + actions) */
+  .lk-portal-page-head {
+    @apply rounded-2xl border border-lk-border bg-lk-surface p-5 shadow-lk-card-md ring-1 ring-slate-100/80 sm:p-6;
+  }
+
+  /* Thin scrollbar for dashboard nav / panels (Firefox + WebKit) */
+  .lk-scroll-elegant {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+  }
+  .lk-scroll-elegant::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .lk-scroll-elegant::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-300/80;
+  }
+  .lk-scroll-elegant::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .lk-scroll-dark {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+  }
+  .lk-scroll-dark::-webkit-scrollbar {
+    width: 6px;
+  }
+  .lk-scroll-dark::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-white/25;
+  }
+  .lk-scroll-dark::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Home hero — seamless trust-badge marquee */
+  @keyframes lk-marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  .animate-lk-marquee {
+    animation: lk-marquee 42s linear infinite;
+  }
+  .animate-lk-marquee:hover {
+    animation-play-state: paused;
+  }
+}
+
+@layer utilities {
+  /* --- Scroll reveal (paired with .lk-reveal-on) --- */
+  .lk-reveal {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    transition:
+      opacity 0.65s ease-out,
+      transform 0.65s ease-out;
+    transition-delay: var(--lk-reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  .lk-reveal-left {
+    transform: translate3d(-18px, 0, 0);
+  }
+  .lk-reveal-right {
+    transform: translate3d(18px, 0, 0);
+  }
+  .lk-reveal-scale {
+    transform: translate3d(0, 12px, 0) scale(0.98);
+  }
+  .lk-reveal-on {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    will-change: auto;
+  }
+
+  /* --- Hero sequential entrance (CSS only) --- */
+  @keyframes lk-hero-fade-up {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  @keyframes lk-hero-slide-right {
+    from {
+      opacity: 0;
+      transform: translate3d(22px, 0, 0) scale(0.99);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+  .lk-hero-enter {
+    opacity: 0;
+    animation: lk-hero-fade-up 0.68s ease-out forwards;
+  }
+  .lk-hero-enter-right {
+    opacity: 0;
+    animation: lk-hero-slide-right 0.72s ease-out forwards;
+  }
+
+  @keyframes lk-float-y {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -8px, 0);
+    }
+  }
+  .lk-float-slow {
+    animation: lk-float-y 9s ease-in-out infinite;
+  }
+
+  @keyframes lk-pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.82;
+    }
+  }
+  .lk-pulse-soft {
+    animation: lk-pulse-soft 3.5s ease-in-out infinite;
+  }
+
+  @keyframes lk-aurora-drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 0.38;
+    }
+    50% {
+      transform: translate3d(-2.5%, 3%, 0) scale(1.06);
+      opacity: 0.52;
+    }
+  }
+  .lk-hero-aurora {
+    animation: lk-aurora-drift 20s ease-in-out infinite;
+  }
+
+  @keyframes lk-gradient-shift {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 0.72;
+    }
+  }
+  .lk-gradient-shift {
+    animation: lk-gradient-shift 14s ease-in-out infinite;
+  }
+
+  @keyframes lk-dropdown-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -6px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  .lk-dropdown-animate {
+    animation: lk-dropdown-in 0.22s ease-out;
+  }
+
+  .lk-card-lift {
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .lk-card-lift:hover {
+    transform: translate3d(0, -4px, 0);
+    box-shadow: 0 18px 40px -18px rgb(15 23 42 / 0.18);
+  }
+
+  .lk-btn-lift {
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .lk-btn-lift:hover {
+    transform: translate3d(0, -2px, 0);
+  }
+  .lk-btn-lift:active {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (max-width: 639px) {
+  .lk-reveal {
+    transform: translate3d(0, 10px, 0);
+  }
+  .lk-reveal-left {
+    transform: translate3d(-10px, 0, 0);
+  }
+  .lk-reveal-right {
+    transform: translate3d(10px, 0, 0);
+  }
+  .lk-reveal-scale {
+    transform: translate3d(0, 8px, 0) scale(0.99);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lk-reveal,
+  .lk-reveal-left,
+  .lk-reveal-right,
+  .lk-reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+  .lk-hero-enter,
+  .lk-hero-enter-right {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .lk-float-slow,
+  .lk-pulse-soft,
+  .lk-hero-aurora,
+  .lk-gradient-shift {
+    animation: none !important;
+  }
+  .lk-dropdown-animate {
+    animation: none !important;
+  }
+  .lk-card-lift:hover,
+  .lk-btn-lift:hover {
+    transform: none !important;
+  }
+  .animate-lk-marquee {
+    animation: none !important;
+  }
+  .lk-typing-caret {
+    animation: none !important;
+  }
+  .lk-premium-word {
+    animation: none !important;
+  }
+}
+
+@layer utilities {
+  @keyframes lkTypingCaret {
+    0%,
+    45% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+  .lk-typing-caret {
+    animation: lkTypingCaret 0.95s step-end infinite;
+  }
+
+  @keyframes lkPremiumWord {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.4rem, 0);
+      filter: blur(3px);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      filter: blur(0);
+    }
+  }
+  .lk-premium-word {
+    animation: lkPremiumWord 0.68s cubic-bezier(0.22, 1, 0.32, 1) both;
+  }
+}
