@@ -1,0 +1,87 @@
+# Public deploy: MongoDB + backend + frontend + nginx gateway + Cloudflare free HTTPS tunnel.
+# Usage: cp .env.public.example .env.public && ./deploy-public.sh
+# Or:    docker compose -f docker-compose.public.yml --env-file .env.public up -d --build
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: lawyerskonnect-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: lawyerskonnect
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: lawyerskonnect-backend
+    restart: unless-stopped
+    env_file:
+      - .env.public
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/lawyerskonnect}
+      FRONTEND_URL: ${PUBLIC_URL}
+      CORS_ORIGINS: ${PUBLIC_URL}
+      API_BASE_URL: ${PUBLIC_URL}
+      NODE_ENV: ${NODE_ENV:-development}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-mock}
+      SMS_PROVIDER: ${SMS_PROVIDER:-mock}
+      AUTH_LOGIN_OTP_ENABLED: ${AUTH_LOGIN_OTP_ENABLED:-false}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-manual}
+      KYC_PYTHON_BIN: python3
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/public/stats').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 90s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${PUBLIC_URL}
+    container_name: lawyerskonnect-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  gateway:
+    image: nginx:alpine
+    container_name: lawyerskonnect-gateway
+    restart: unless-stopped
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./gateway/proxy_params.conf:/etc/nginx/conf.d/proxy_params.conf:ro
+    ports:
+      - "${GATEWAY_PORT:-8080}:80"
+    depends_on:
+      - frontend
+      - backend
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: lawyerskonnect-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://gateway:80
+    depends_on:
+      - gateway
+
+volumes:
+  mongo_data:
+  backend_uploads:

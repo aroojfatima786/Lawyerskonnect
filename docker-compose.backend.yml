@@ -1,3 +1,6 @@
+# Backend + MongoDB only — use when frontend stays on Vercel (recommended).
+# Run: docker compose -f docker-compose.backend.yml --env-file .env.prod up -d --build
+
 services:
   mongo:
     image: mongo:7
@@ -7,8 +10,6 @@ services:
       MONGO_INITDB_DATABASE: lawyerskonnect
     volumes:
       - mongo_data:/data/db
-    ports:
-      - "27017:27017"
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
       interval: 5s
@@ -23,19 +24,20 @@ services:
     container_name: lawyerskonnect-backend
     restart: unless-stopped
     env_file:
-      - .env.docker
+      - .env.prod
     environment:
       MONGODB_URI: mongodb://mongo:27017/lawyerskonnect
-      FRONTEND_URL: http://localhost:5173
-      CORS_ORIGINS: http://localhost:5173
-      NODE_ENV: development
-      EMAIL_PROVIDER: mock
-      SMS_PROVIDER: mock
-      AUTH_LOGIN_OTP_ENABLED: "false"
-      PAYMENT_PROVIDER: manual
+      FRONTEND_URL: ${FRONTEND_URL}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      API_BASE_URL: ${API_BASE_URL}
+      NODE_ENV: ${NODE_ENV:-production}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-mock}
+      SMS_PROVIDER: ${SMS_PROVIDER:-mock}
+      AUTH_LOGIN_OTP_ENABLED: ${AUTH_LOGIN_OTP_ENABLED:-false}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-manual}
       KYC_PYTHON_BIN: python3
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT:-3000}:3000"
     volumes:
       - backend_uploads:/app/uploads
     depends_on:
@@ -46,21 +48,7 @@ services:
       interval: 15s
       timeout: 10s
       retries: 8
-      start_period: 60s
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_BASE_URL: http://localhost:3000
-    container_name: lawyerskonnect-frontend
-    restart: unless-stopped
-    ports:
-      - "5173:80"
-    depends_on:
-      backend:
-        condition: service_healthy
+      start_period: 90s
 
 volumes:
   mongo_data:
