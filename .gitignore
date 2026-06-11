@@ -10,12 +10,15 @@
 **/.tmp/
 
 # Environment secrets (use .env.example on server)
-**/.env
 **/.env.local
 **/.env.*.local
 **/.env.docker
+**/.env.prod
+**/.env.public
 !**/.env.example
 !**/.env.docker.example
+!**/.env.prod.example
+!**/.env.public.example
 
 # Logs & OS
 *.log
@@ -40,3 +43,4 @@ backend/coverage/
 **/.venv/
 **/venv/
 **/venv_clean/
+config.bat

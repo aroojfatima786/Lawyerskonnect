@@ -1,6 +1,23 @@
-# LawyersKonnect — Docker (local full stack)
+# LawyersKonnect — Docker
 
-Run **MongoDB + backend + frontend** with one command. Does not replace Vercel/Render production deploy.
+## Chrome par link (bina domain, bina local npm) — recommended for FYP
+
+**Free HTTPS URL** milti hai jaise `https://lawyerskonnect-xxxx.trycloudflare.com` — domain khareedne ki zaroorat nahi.
+
+Oracle Cloud free VM par ek command:
+
+```bash
+cp .env.public.example .env.public && nano .env.public   # JWT_SECRET set karo
+chmod +x deploy-public.sh && ./deploy-public.sh
+```
+
+Full guide: **[DEPLOY-PUBLIC.md](DEPLOY-PUBLIC.md)**
+
+---
+
+## Local test (sirf apne laptop par)
+
+Run **MongoDB + backend + frontend** with one command on your PC:
 
 ## Prerequisites
 
@@ -84,3 +101,5 @@ Compose overrides in `docker-compose.yml` (you usually don't change these):
 ## Branch / production safety
 
 Docker files live on **`feature/docker`** until merged. Vercel + Render deploy from `main` unchanged.
+
+**Render free tier sleeps after ~15 min** — for 24/7 backend without paid Render, see **[DEPLOY-DOCKER.md](DEPLOY-DOCKER.md)** (Oracle Cloud VM) or **[DEPLOY-PUBLIC.md](DEPLOY-PUBLIC.md)** (full stack + free Cloudflare HTTPS URL, no domain).
