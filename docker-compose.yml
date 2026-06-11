@@ -1,0 +1,67 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: lawyerskonnect-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: lawyerskonnect
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: lawyerskonnect-backend
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/lawyerskonnect
+      FRONTEND_URL: http://localhost:5173
+      CORS_ORIGINS: http://localhost:5173
+      NODE_ENV: development
+      EMAIL_PROVIDER: mock
+      SMS_PROVIDER: mock
+      AUTH_LOGIN_OTP_ENABLED: "false"
+      PAYMENT_PROVIDER: manual
+      KYC_PYTHON_BIN: python3
+    ports:
+      - "3000:3000"
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/public/stats').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 60s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:3000
+    container_name: lawyerskonnect-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
+  backend_uploads:
