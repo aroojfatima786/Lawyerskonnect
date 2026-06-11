@@ -1,0 +1,55 @@
+# Backend + MongoDB only — use when frontend stays on Vercel (recommended).
+# Run: docker compose -f docker-compose.backend.yml --env-file .env.prod up -d --build
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: lawyerskonnect-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: lawyerskonnect
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: lawyerskonnect-backend
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/lawyerskonnect
+      FRONTEND_URL: ${FRONTEND_URL}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      API_BASE_URL: ${API_BASE_URL}
+      NODE_ENV: ${NODE_ENV:-production}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-mock}
+      SMS_PROVIDER: ${SMS_PROVIDER:-mock}
+      AUTH_LOGIN_OTP_ENABLED: ${AUTH_LOGIN_OTP_ENABLED:-false}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-manual}
+      KYC_PYTHON_BIN: python3
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/public/stats').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 90s
+
+volumes:
+  mongo_data:
+  backend_uploads:
