@@ -35,7 +35,7 @@ Save as `MONGODB_URI`.
 | Name | `lawyerskonnect-api` |
 | Root Directory | `backend` |
 | Runtime | Node |
-| Build Command | `npm ci && npm run build` |
+| Build Command | `npm ci --include=dev && npm run build` |
 | Start Command | `npm run start:prod` |
 | Plan | Free (demo) or Starter (viva, no sleep) |
 
