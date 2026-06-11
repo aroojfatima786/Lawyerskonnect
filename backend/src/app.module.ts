@@ -51,6 +51,7 @@ import { AiLegalService } from './services/ai-legal.service';
 import { LegalRagService } from './services/legal-rag.service';
 import { StorageService } from './services/storage.service';
 import { LegalKnowledgeService } from './services/legal-knowledge.service';
+import { buildMongooseOptions } from './config/mongodb';
 import { CitizenKycGuard } from './auth/citizen-kyc.guard';
 
 // Gateways
@@ -100,13 +101,7 @@ const isProd = process.env.NODE_ENV === 'production';
         const mongoUri = configService.get<string>('MONGODB_URI');
         if (!mongoUri) throw new Error('MONGODB_URI environment variable is not defined');
 
-        return {
-          uri: mongoUri,
-          maxPoolSize: 10,
-          serverSelectionTimeoutMS: 5000,
-          socketTimeoutMS: 45000,
-          autoIndex: !isProd,
-        };
+        return buildMongooseOptions(mongoUri, isProd);
       },
       inject: [ConfigService],
     }),
