@@ -5,15 +5,15 @@ WORKDIR /app
 
 # Python 3 for KYC face-match script (kyc_face_match.py)
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends python3 python3-pip \
+  && apt-get install -y --no-install-recommends python3 python3-pip python-is-python3 \
   && rm -rf /var/lib/apt/lists/*
 
 COPY backend/package.json backend/package-lock.json ./
 
 RUN npm ci --include=dev
 
-COPY backend/scripts/requirements-kyc.txt ./scripts/requirements-kyc.txt
-RUN pip3 install --no-cache-dir --break-system-packages -r scripts/requirements-kyc.txt
+COPY backend/scripts/requirements-kyc-docker.txt ./scripts/requirements-kyc-docker.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r scripts/requirements-kyc-docker.txt
 
 COPY backend/ ./
 

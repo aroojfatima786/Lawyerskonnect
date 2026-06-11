@@ -69,7 +69,7 @@ Compose overrides in `docker-compose.yml` (you usually don't change these):
 
 - **5–15 minutes** first time (npm, Python/OpenCV, KYC ONNX model download ~30MB)
 - RAG chatbot uses **pre-built** index in `backend/data/rag/` (342 source PDFs not copied into image)
-- KYC face match needs Python in the backend image (included)
+- KYC face match needs Python + OpenCV in the backend image (uses `requirements-kyc-docker.txt` — no dlib/face_recognition build)
 
 ## Troubleshooting
 
